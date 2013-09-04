@@ -2,7 +2,7 @@ package percolation;
 
 import algs4.WeightedQuickUnionUF;
 
-/**
+/**.
  * User: bharadwaj
  * Date: 27/08/13
  * Time: 10:44 PM
@@ -22,22 +22,25 @@ public class Percolation {
                     return 0;
                 case OPEN:
                     return 1;
+                default:
+                    return 0;
             }
-            return 0;
         }
     }
 
     // Just checks dimensions and throws IndexOutOfBoundsException if out of range
-    private void checkDimensions(int i, int j) {
-        if(i >= arrayDimension || i < 0) {
-            throw new java.lang.IndexOutOfBoundsException("index = " + i + " is invalid. i should be between [1, " + arrayDimension + "]");
+    private void checkDimensions(final int i, final int j) {
+        if (i >= arrayDimension || i < 0) {
+            throw new java.lang.IndexOutOfBoundsException(
+                    "index = " + i + " is invalid. i should be between [1, " + arrayDimension + "]");
         }
-        if(j >= arrayDimension || j < 0) {
-            throw new java.lang.IndexOutOfBoundsException("index = " + j + " is invalid. i should be between [1, " + arrayDimension + "]");
+        if (j >= arrayDimension || j < 0) {
+            throw new java.lang.IndexOutOfBoundsException(
+                    "index = " + j + " is invalid. i should be between [1, " + arrayDimension + "]");
         }
     }
 
-    private int getCell(int i, int j) {
+    private int getCell(final int i, final int j) {
         //i -= 1; // since i is always between [1, N] and array is between [0, N-1]
         //j -= 1; // since j is always between [1, N] and array is between [0, N-1]
         return (i * arrayDimension) + j;
@@ -49,14 +52,15 @@ public class Percolation {
      * create N-by-N grid, with all sites blocked.
      * Since java initializes integer array with 0, no need to explicity mark 0 for each array element
      * @param N dimension of the two-dimensional array. Both dimensions are equal
+     * @throws Exception
      */
-    public Percolation(int N) throws Exception {
-        if(N < 2) {
+    public Percolation(final int N) throws Exception {
+        if (N < 2) {
             throw new Exception("The API specifies that valid row and column indices are between 1 and N where N > 1.");
         }
-        connArray = new int[N*N];
+        connArray = new int[N * N];
         arrayDimension = N;
-        weightedQuickUnionUF = new WeightedQuickUnionUF(N*N);
+        weightedQuickUnionUF = new WeightedQuickUnionUF(N * N);
     }
 
     /**
@@ -64,35 +68,35 @@ public class Percolation {
      * @param i row number
      * @param j column number
      */
-    public void open(int i, int j) {
-        checkDimensions(i,j);
-        int cell = getCell(i,j);
+    public void open(final int i, final int j) {
+        checkDimensions(i, j);
+        int cell = getCell(i, j);
         connArray[cell] = STATE.OPEN.value();
         //weightedQuickUnionUF.union(i, j);
 
         int adjacent;
-        if(i != 0) {
-            adjacent = getCell(i-1, j);
-            if(isOpen(i-1, j)) {
+        if (i != 0) {
+            adjacent = getCell(i - 1, j);
+            if (isOpen(i - 1, j)) {
                 weightedQuickUnionUF.union(cell, adjacent);
             }
         }
-        if(i != (arrayDimension-1)) {
-            adjacent = getCell(i+1, j);
-            if(isOpen(i+1, j)) {
+        if (i != (arrayDimension - 1)) {
+            adjacent = getCell(i + 1, j);
+            if (isOpen(i + 1, j)) {
                 weightedQuickUnionUF.union(cell, adjacent);
             }
         }
 
-        if(j != 0) {
-            adjacent = getCell(i, j-1);
-            if(isOpen(i, j-1)) {
+        if (j != 0) {
+            adjacent = getCell(i, j - 1);
+            if (isOpen(i, j - 1)) {
                 weightedQuickUnionUF.union(cell, adjacent);
             }
         }
-        if(j != (arrayDimension-1)) {
-            adjacent = getCell(i, j+1);
-            if(isOpen(i, j+1)) {
+        if (j != (arrayDimension - 1)) {
+            adjacent = getCell(i, j + 1);
+            if (isOpen(i, j + 1)) {
                 weightedQuickUnionUF.union(cell, adjacent);
             }
         }
@@ -104,10 +108,10 @@ public class Percolation {
      * @param j column number
      * @return true if site is open; false otherwise
      */
-    public boolean isOpen(int i, int j) {
-        checkDimensions(i,j);
-        int cell = getCell(i,j);
-        if(connArray[cell] == STATE.OPEN.value()) {
+    public boolean isOpen(final int i, final int j) {
+        checkDimensions(i, j);
+        int cell = getCell(i, j);
+        if (connArray[cell] == STATE.OPEN.value()) {
             return true;
         }
         return false;
@@ -119,23 +123,23 @@ public class Percolation {
      * @param j column number
      * @return true if i/j belong to a full site; false otherwise
      */
-    public boolean isFull(int i, int j) {
-        checkDimensions(i,j);
-        if(isOpen(i,j) == false) {
+    public boolean isFull(final int i, final int j) {
+        checkDimensions(i, j);
+        if (!isOpen(i, j)) {
             return false;
         }
 
-        int cell = getCell(i,j);
-        if(cell < (arrayDimension-1)) {
+        int cell = getCell(i, j);
+        if (cell < (arrayDimension - 1)) {
             // A full site is an open site that can be connected to an open site in the
             //          top row via a chain of neighboring (left, right, up, down) open sites.
             // By the above definition, open cells on the top row are always full
             return true;
         }
 
-        for(int x=0; x<arrayDimension; x++) {
+        for (int x = 0; x < arrayDimension; x++) {
             boolean status = weightedQuickUnionUF.connected(x, cell);
-            if(status == true) {
+            if (status) {
                 return true;
             }
         }
@@ -148,8 +152,8 @@ public class Percolation {
      */
     public boolean percolates() {
         // just check if any of the elements in the bottom most row is full
-        for(int x=0; x<arrayDimension; x++) {
-            if(isFull((arrayDimension-1), x) == true ) {
+        for (int x = 0; x < arrayDimension; x++) {
+            if (isFull((arrayDimension - 1), x)) {
                 return true;
             }
         }

@@ -1,6 +1,6 @@
 package percolation;
 
-/**
+/**.
  * User: bharadwaj
  * Date: 27/08/13
  * Time: 10:44 PM
@@ -17,7 +17,7 @@ public class PercolationStats {
      * @param N size of the square grid. The API specifies that valid indices are between 1 and N where N > 1.
      * @param T number of compute experiments. This count should be greater than 0.
      */
-    public PercolationStats(int N, int T) throws Exception {
+    public PercolationStats(final int N, final int T) throws Exception {
         for (int i = 0; i < T; i++) {
             int j = 0;
             Percolation percolation = new Percolation(N); // the API specifies that valid row and column indices are between 1 and N.
@@ -31,20 +31,20 @@ public class PercolationStats {
                 //int col = testArray[j][1];
                 System.out.print("(" + row + "," + col + ") ");
 
-                if(percolation.isOpen(row, col)) {
+                if (percolation.isOpen(row, col)) {
                     // this was already open
                     continue;
                 }
 
                 j++;
-                if(j > (N*N)) {
+                if (j > (N * N)) {
                     throw new Exception("Experiment number = " + i + " FAILED. Did not percolate at all. Implementation is broken.");
                 }
 
                 percolation.open(row, col);
             }
             System.out.println(" ]");
-            double fraction = (double)j/(N*N);
+            double fraction = (double)j / (N * N);
             results[i] = fraction;
             System.out.println("Unique opens = " + j + ". Fraction of sites open when grid percolated = " + fraction);
         }
@@ -59,7 +59,7 @@ public class PercolationStats {
         for (int i = 0; i < computeT; i++) {
             mean += results[i];
         }
-        mean = (mean/computeT);
+        mean = (mean / computeT);
         return mean;
     }
 
@@ -71,10 +71,10 @@ public class PercolationStats {
         double mean = mean();
         double sumOfSquares = 0;
         for (int i = 0; i < computeT; i++) {
-            double meanDiff = results[i]-mean;
+            double meanDiff = results[i] - mean;
             sumOfSquares += Math.pow(meanDiff, 2);
         }
-        double variance = sumOfSquares/computeT;
+        double variance = sumOfSquares / computeT;
         double stdDev = Math.sqrt(variance);
         return stdDev;
     }
@@ -102,19 +102,19 @@ public class PercolationStats {
      *      Second parameter is the number of compute experiments. This count should be greater than 0.
      * @throws Exception
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
         if (args.length != 2) {
             throw new Exception("Exactly 2 params required");
         }
 
         gridN = Integer.parseInt(args[0]);
-        if(gridN < 2) {
+        if (gridN < 2) {
             throw new Exception("Grid size should be greater than 1");
         }
         System.out.println("N = " + gridN);
 
         computeT = Integer.parseInt(args[1]);
-        if(computeT <= 0) {
+        if (computeT <= 0) {
             throw new Exception("Number of computes should be greater than 0");
         }
         System.out.println("T = " + computeT);
