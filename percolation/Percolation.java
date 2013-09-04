@@ -29,18 +29,18 @@ public class Percolation {
 
     // Just checks dimensions and throws IndexOutOfBoundsException if out of range
     private void checkDimensions(int i, int j) {
-        if(i > arrayDimension || i < 1) {
+        if(i >= arrayDimension || i < 0) {
             throw new java.lang.IndexOutOfBoundsException("index = " + i + " is invalid. i should be between [1, " + arrayDimension + "]");
         }
-        if(j > arrayDimension || j < 1) {
+        if(j >= arrayDimension || j < 0) {
             throw new java.lang.IndexOutOfBoundsException("index = " + j + " is invalid. i should be between [1, " + arrayDimension + "]");
         }
     }
 
     private int getCell(int i, int j) {
-        i -= 1; // since i is always between [1, N] and array is between [0, N-1]
-        j -= 1; // since j is always between [1, N] and array is between [0, N-1]
-        return (j * arrayDimension) + i;
+        //i -= 1; // since i is always between [1, N] and array is between [0, N-1]
+        //j -= 1; // since j is always between [1, N] and array is between [0, N-1]
+        return (i * arrayDimension) + j;
     }
 
     // PUBLIC methods here on...
@@ -51,12 +51,12 @@ public class Percolation {
      * @param N dimension of the two-dimensional array. Both dimensions are equal
      */
     public Percolation(int N) throws Exception {
-        if(N <= 0) {
+        if(N < 2) {
             throw new Exception("The API specifies that valid row and column indices are between 1 and N where N > 1.");
         }
         connArray = new int[N*N];
         arrayDimension = N;
-        weightedQuickUnionUF = new WeightedQuickUnionUF(N);
+        weightedQuickUnionUF = new WeightedQuickUnionUF(N*N);
     }
 
     /**
@@ -68,7 +68,34 @@ public class Percolation {
         checkDimensions(i,j);
         int cell = getCell(i,j);
         connArray[cell] = STATE.OPEN.value();
-        weightedQuickUnionUF.union(i, j);
+        //weightedQuickUnionUF.union(i, j);
+
+        int adjacent;
+        if(i != 0) {
+            adjacent = getCell(i-1, j);
+            if(isOpen(i-1, j)) {
+                weightedQuickUnionUF.union(cell, adjacent);
+            }
+        }
+        if(i != (arrayDimension-1)) {
+            adjacent = getCell(i+1, j);
+            if(isOpen(i+1, j)) {
+                weightedQuickUnionUF.union(cell, adjacent);
+            }
+        }
+
+        if(j != 0) {
+            adjacent = getCell(i, j-1);
+            if(isOpen(i, j-1)) {
+                weightedQuickUnionUF.union(cell, adjacent);
+            }
+        }
+        if(j != (arrayDimension-1)) {
+            adjacent = getCell(i, j+1);
+            if(isOpen(i, j+1)) {
+                weightedQuickUnionUF.union(cell, adjacent);
+            }
+        }
     }
 
     /**
@@ -121,8 +148,8 @@ public class Percolation {
      */
     public boolean percolates() {
         // just check if any of the elements in the bottom most row is full
-        for(int x=0; x<arrayDimension; x++) {
-            if(isFull(x, arrayDimension) == true ) {
+        for(int x=0; x<(arrayDimension-1); x++) {
+            if(isFull((arrayDimension-1), x) == true ) {
                 return true;
             }
         }

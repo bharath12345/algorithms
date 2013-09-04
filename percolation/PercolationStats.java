@@ -18,13 +18,9 @@ public class PercolationStats {
     public PercolationStats(int N, int T) throws Exception {
         for (int i = 0; i < T; i++) {
             int j = 0;
-            Percolation percolation = new Percolation(N-1); // the API specifies that valid row and column indices are between 1 and N.
-            System.out.print("[Experiment num: " + i + "][ Opening = ");
+            Percolation percolation = new Percolation(N); // the API specifies that valid row and column indices are between 1 and N.
+            System.out.print("[Experiment num: " + (i+1) + "][ Opening = ");
             while (!percolation.percolates()) {
-                j++; // start at 1
-                if(j > (N*N)) {
-                    throw new Exception("Experiment number = " + i + " FAILED. Did not percolate at all. Implementation is broken.");
-                }
 
                 int row = (int) (Math.random() * N);
                 int col = (int) (Math.random() * N);
@@ -35,12 +31,17 @@ public class PercolationStats {
                     continue;
                 }
 
+                j++;
+                if(j > (N*N)) {
+                    throw new Exception("Experiment number = " + i + " FAILED. Did not percolate at all. Implementation is broken.");
+                }
+
                 percolation.open(row, col);
             }
             System.out.println(" ]");
-            double fraction = (j/(N*N));
+            double fraction = (double)j/(N*N);
             results[i] = fraction;
-            System.out.println("Experiment number = " + i + ". Fraction of sites open when grid percolated = " + fraction);
+            System.out.println("Unique opens = " + j + ". Fraction of sites open when grid percolated = " + fraction);
         }
     }
 
@@ -102,14 +103,16 @@ public class PercolationStats {
         }
 
         gridN = Integer.parseInt(args[0]);
-        if(gridN <= 1) {
+        if(gridN < 2) {
             throw new Exception("Grid size should be greater than 1");
         }
+        System.out.println("N = " + gridN);
 
         computeT = Integer.parseInt(args[1]);
-        if(gridN <= 0) {
+        if(computeT <= 0) {
             throw new Exception("Number of computes should be greater than 0");
         }
+        System.out.println("T = " + computeT);
 
         results = new double[computeT];
 
