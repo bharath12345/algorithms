@@ -126,7 +126,7 @@ public class Percolation {
         }
 
         int cell = getCell(i,j);
-        if(cell < arrayDimension) {
+        if(cell < (arrayDimension-1)) {
             // A full site is an open site that can be connected to an open site in the
             //          top row via a chain of neighboring (left, right, up, down) open sites.
             // By the above definition, open cells on the top row are always full
@@ -148,7 +148,7 @@ public class Percolation {
      */
     public boolean percolates() {
         // just check if any of the elements in the bottom most row is full
-        for(int x=0; x<(arrayDimension-1); x++) {
+        for(int x=0; x<arrayDimension; x++) {
             if(isFull((arrayDimension-1), x) == true ) {
                 return true;
             }

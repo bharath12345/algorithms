@@ -10,10 +10,12 @@ public class PercolationStats {
     private static int gridN, computeT;
     private static double [] results;
 
+    private int [][] testArray = {{0,1},{0,0},{1,1}};
+
     /**
      * perform T independent computational experiments on an N-by-N grid
-     * @param N
-     * @param T
+     * @param N size of the square grid. The API specifies that valid indices are between 1 and N where N > 1.
+     * @param T number of compute experiments. This count should be greater than 0.
      */
     public PercolationStats(int N, int T) throws Exception {
         for (int i = 0; i < T; i++) {
@@ -24,6 +26,9 @@ public class PercolationStats {
 
                 int row = (int) (Math.random() * N);
                 int col = (int) (Math.random() * N);
+
+                //int row = testArray[j][0];
+                //int col = testArray[j][1];
                 System.out.print("(" + row + "," + col + ") ");
 
                 if(percolation.isOpen(row, col)) {
