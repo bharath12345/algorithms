@@ -29,15 +29,17 @@ public class Percolation {
 
     // Just checks dimensions and throws IndexOutOfBoundsException if out of range
     private void checkDimensions(int i, int j) {
-        if(i > arrayDimension) {
-            throw new java.lang.IndexOutOfBoundsException("index = " + i + " greater than dimension = " + arrayDimension);
+        if(i > arrayDimension || i < 1) {
+            throw new java.lang.IndexOutOfBoundsException("index = " + i + " is invalid. i should be between [1, " + arrayDimension + "]");
         }
-        if(j > arrayDimension) {
-            throw new java.lang.IndexOutOfBoundsException("index = " + j + " greater than dimension = " + arrayDimension);
+        if(j > arrayDimension || j < 1) {
+            throw new java.lang.IndexOutOfBoundsException("index = " + j + " is invalid. i should be between [1, " + arrayDimension + "]");
         }
     }
 
     private int getCell(int i, int j) {
+        i -= 1; // since i is always between [1, N] and array is between [0, N-1]
+        j -= 1; // since j is always between [1, N] and array is between [0, N-1]
         return (j * arrayDimension) + i;
     }
 
@@ -50,11 +52,10 @@ public class Percolation {
      */
     public Percolation(int N) throws Exception {
         if(N <= 0) {
-            throw new Exception("Grid size should be greater than 0");
+            throw new Exception("The API specifies that valid row and column indices are between 1 and N where N > 1.");
         }
         connArray = new int[N*N];
         arrayDimension = N;
-
         weightedQuickUnionUF = new WeightedQuickUnionUF(N);
     }
 
@@ -67,6 +68,7 @@ public class Percolation {
         checkDimensions(i,j);
         int cell = getCell(i,j);
         connArray[cell] = STATE.OPEN.value();
+        weightedQuickUnionUF.union(i, j);
     }
 
     /**
@@ -96,6 +98,20 @@ public class Percolation {
             return false;
         }
 
+        int cell = getCell(i,j);
+        if(cell < arrayDimension) {
+            // A full site is an open site that can be connected to an open site in the
+            //          top row via a chain of neighboring (left, right, up, down) open sites.
+            // By the above definition, open cells on the top row are always full
+            return true;
+        }
+
+        for(int x=0; x<arrayDimension; x++) {
+            boolean status = weightedQuickUnionUF.connected(x, cell);
+            if(status == true) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -104,6 +120,12 @@ public class Percolation {
      * @return true if system percolates; false otherwise
      */
     public boolean percolates() {
+        // just check if any of the elements in the bottom most row is full
+        for(int x=0; x<arrayDimension; x++) {
+            if(isFull(x, arrayDimension) == true ) {
+                return true;
+            }
+        }
         return false;
     }
 }

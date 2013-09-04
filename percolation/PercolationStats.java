@@ -12,22 +12,23 @@ public class PercolationStats {
 
     /**
      * perform T independent computational experiments on an N-by-N grid
-     *
      * @param N
      * @param T
      */
     public PercolationStats(int N, int T) throws Exception {
         for (int i = 0; i < T; i++) {
-            int j = 1;
-            Percolation percolation = new Percolation(N);
+            int j = 0;
+            Percolation percolation = new Percolation(N-1); // the API specifies that valid row and column indices are between 1 and N.
+            System.out.print("[Experiment num: " + i + "][ Opening = ");
             while (!percolation.percolates()) {
-                j++;
+                j++; // start at 1
                 if(j > (N*N)) {
                     throw new Exception("Experiment number = " + i + " FAILED. Did not percolate at all. Implementation is broken.");
                 }
 
                 int row = (int) (Math.random() * N);
                 int col = (int) (Math.random() * N);
+                System.out.print("(" + row + "," + col + ") ");
 
                 if(percolation.isOpen(row, col)) {
                     // this was already open
@@ -36,6 +37,7 @@ public class PercolationStats {
 
                 percolation.open(row, col);
             }
+            System.out.println(" ]");
             double fraction = (j/(N*N));
             results[i] = fraction;
             System.out.println("Experiment number = " + i + ". Fraction of sites open when grid percolated = " + fraction);
@@ -44,7 +46,6 @@ public class PercolationStats {
 
     /**
      * sample mean of percolation threshold
-     *
      * @return
      */
     public double mean() {
@@ -58,7 +59,6 @@ public class PercolationStats {
 
     /**
      * sample standard deviation of percolation threshold
-     *
      * @return
      */
     public double stddev() {
@@ -75,7 +75,6 @@ public class PercolationStats {
 
     /**
      * returns lower bound of the 95% confidence interval
-     *
      * @return
      */
     public double confidenceLo() {
@@ -84,21 +83,34 @@ public class PercolationStats {
 
     /**
      * returns upper bound of the 95% confidence interval
-     *
      * @return
      */
     public double confidenceHi() {
         return (mean() + (1.96 * stddev()));
     }
 
-    public static void main(String[] args) {
+    /**
+     * Runs tests to find the probability that a system percolates by finding mean, stddev and confidence interval
+     * @param args
+     *      First parameter is the size of the square grid. The API specifies that valid indices are between 1 and N where N > 1.
+     *      Second parameter is the number of compute experiments. This count should be greater than 0.
+     * @throws Exception
+     */
+    public static void main(String[] args) throws Exception {
         if (args.length != 2) {
-            System.out.println("Exactly 2 params required");
-            return;
+            throw new Exception("Exactly 2 params required");
         }
 
         gridN = Integer.parseInt(args[0]);
+        if(gridN <= 1) {
+            throw new Exception("Grid size should be greater than 1");
+        }
+
         computeT = Integer.parseInt(args[1]);
+        if(gridN <= 0) {
+            throw new Exception("Number of computes should be greater than 0");
+        }
+
         results = new double[computeT];
 
         PercolationStats ps = null;
