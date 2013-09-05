@@ -115,7 +115,7 @@ public class Subset {
 
         // using RandomizedQueue
         for (int i = 0; i < k; i++) {
-            //System.out.println(stringQueue.sample());
+            System.out.println(stringQueue.dequeue());
         }
     }
 
@@ -129,7 +129,7 @@ public class Subset {
         System.out.println("size = " + stringQueue.size());
 
         for (String string : stringQueue) {
-            System.out.println("string = " + string);
+            System.out.println("random iterating string = " + string);
         }
 
         int len = stringQueue.size();
@@ -151,7 +151,9 @@ public class Subset {
 
         //randomUsingDeque(k);
 
-        unitTestRandomizedQueue();
+        //unitTestRandomizedQueue();
+
+        randomUsingQueue(k);
 
     }
 }

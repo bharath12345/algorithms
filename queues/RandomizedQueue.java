@@ -10,13 +10,19 @@ import java.util.Iterator;
 public class RandomizedQueue<Item> implements Iterable<Item> {
 
     private class Node {
-        /** data item */
+        /**
+         * data item
+         */
         private Item item;
 
-        /** pointer to the next item, i.e., topmost to bottom */
+        /**
+         * pointer to the next item, i.e., topmost to bottom
+         */
         private Node next;
 
-        /** pointer to the previous item, i.e., from bottom to topmost  */
+        /**
+         * pointer to the previous item, i.e., from bottom to topmost
+         */
         private Node previous;
     }
 
@@ -38,6 +44,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     /**
      * returns a random within the given range
+     *
      * @param range
      * @return
      */
@@ -47,6 +54,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     /**
      * is the queue empty?
+     *
      * @return
      */
     public boolean isEmpty() {
@@ -58,6 +66,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     /**
      * return the number of items on the queue
+     *
      * @return
      */
     public int size() {
@@ -66,6 +75,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     /**
      * add the item
+     *
      * @param item
      */
     public void enqueue(final Item item) {
@@ -94,6 +104,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     /**
      * delete and return a random item
+     *
      * @return
      */
     public Item dequeue() {
@@ -104,7 +115,13 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         int random = randomInRange(size());
         length--;
 
-        System.out.println("removing random index = " + random);
+        if (length == 0) {
+            Item item = topmost.item;
+            topmost = null;
+            return item;
+        }
+
+        //System.out.println("removing random index = " + random);
         Node randomNode = topmost;
         for (int i = 0; i < random; i++) {
             randomNode = randomNode.next;
@@ -135,6 +152,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     /**
      * return (but do not delete) a random item
+     *
      * @return
      */
     public Item sample() {
@@ -153,16 +171,19 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     /**
      * return an independent iterator over items in random order
+     *
      * @return
      */
     public Iterator<Item> iterator() {
         Iterator<Item> it = new Iterator<Item>() {
 
             private Node iteratingNode = topmost;
+            private int[] generatedRandoms = new int[length];
+            private int index = 0;
 
             @Override
             public boolean hasNext() {
-                if (iteratingNode != null) {
+                if (iteratingNode != null && index != length) {
                     return true;
                 }
                 return false;
@@ -170,9 +191,28 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
             @Override
             public Item next() {
-                Node temp = iteratingNode;
-                iteratingNode = iteratingNode.next;
-                return temp.item;
+                int random;
+                while (true) {
+                    random = randomInRange(length);
+                    boolean found = false;
+                    for (int i = 0; i < index; i++) {
+                        if (random == generatedRandoms[i]) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        break;
+                    }
+                }
+
+                generatedRandoms[index++] = random;
+
+                iteratingNode = topmost;
+                for (int i = 0; i < random; i++) {
+                    iteratingNode = iteratingNode.next;
+                }
+                return iteratingNode.item;
             }
 
             @Override
