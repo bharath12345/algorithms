@@ -9,11 +9,42 @@ import java.util.*;
  */
 public class Deque<Item> implements Iterable<Item> {
 
+    private class Node {
+        /** data item */
+        private Item item;
+
+        /** pointer to the topmost item in the deque */
+        private Node first;
+
+        /** pointer to the next item, i.e., topmost to bottom */
+        private Node next;
+
+        /** pointer to the previous item, i.e., from bottom to topmost  */
+        private Node previous;
+
+        /** pointer to the bottommost item in the deque */
+        private Node last;
+    }
+
+    /**
+     * pointer to the topmost in the deque
+     */
+    private Node topmost = null;
+
+    /**
+     * pointer to the bottommost in the deque
+     */
+    private Node bottommost = null;
+
+    /**
+     * length of the deque
+     */
+    private int length = 0;
+
     /**
      * construct an empty deque
      */
     public Deque() {
-
     }
 
     /**
@@ -21,7 +52,10 @@ public class Deque<Item> implements Iterable<Item> {
      * @return
      */
     public boolean isEmpty() {
-
+        if (topmost == null || bottommost == null) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -29,7 +63,24 @@ public class Deque<Item> implements Iterable<Item> {
      * @return
      */
     public int size() {
+        return length;
+    }
 
+    /**
+     * add when the topmost is null
+     * @param item
+     */
+    private void add(final Item item) {
+        topmost = new Node();
+        topmost.item = item;
+
+        topmost.first = topmost;
+        topmost.last = topmost;
+
+        topmost.next = null;
+        topmost.previous = null;
+
+        bottommost = topmost;
     }
 
     /**
@@ -41,6 +92,23 @@ public class Deque<Item> implements Iterable<Item> {
             throw new java.lang.NullPointerException("trying to add null item");
         }
 
+        length++;
+
+        if (topmost == null) {
+            add(item);
+            return;
+        }
+
+        Node newNode = new Node();
+        newNode.item = item;
+
+        newNode.first = newNode;
+        newNode.last = bottommost;
+
+        newNode.next = topmost;
+        newNode.previous = null;
+
+        topmost = newNode;
     }
 
     /**
@@ -51,6 +119,24 @@ public class Deque<Item> implements Iterable<Item> {
         if (item == null) {
             throw new java.lang.NullPointerException("trying to add null item");
         }
+
+        length++;
+
+        if (bottommost == null) {
+            add(item);
+            return;
+        }
+
+        Node newNode = new Node();
+        newNode.item = item;
+
+        newNode.last = newNode;
+        newNode.first = topmost;
+
+        newNode.next = null;
+        newNode.previous = bottommost;
+
+        bottommost = newNode;
     }
 
     /**
@@ -62,6 +148,18 @@ public class Deque<Item> implements Iterable<Item> {
            throw new java.util.NoSuchElementException("trying to remove element from an empty deque");
         }
 
+        length--;
+
+        Node temp = topmost;
+        topmost = topmost.next;
+
+        Item value = temp.item;
+        temp.first = null;
+        temp.last = null;
+        temp.next = null;
+        temp.previous = null;
+        temp = null;
+        return value;
     }
 
     /**
@@ -72,6 +170,19 @@ public class Deque<Item> implements Iterable<Item> {
         if (size() == 0) {
             throw new java.util.NoSuchElementException("trying to remove element from an empty deque");
         }
+
+        length--;
+
+        Node temp = bottommost;
+        bottommost = bottommost.previous;
+
+        Item value = temp.item;
+        temp.first = null;
+        temp.last = null;
+        temp.next = null;
+        temp.previous = null;
+        temp = null;
+        return value;
     }
 
     /**
@@ -79,6 +190,30 @@ public class Deque<Item> implements Iterable<Item> {
      * @return
      */
     public Iterator<Item> iterator() {
+        Iterator<Item> it = new Iterator<Item>() {
 
+            private Node iteratingNode = topmost;
+
+            @Override
+            public boolean hasNext() {
+                if (iteratingNode.next != null) {
+                    return true;
+                }
+                return false;
+            }
+
+            @Override
+            public Item next() {
+                Node temp = iteratingNode;
+                iteratingNode = iteratingNode.next;
+                return temp.item;
+            }
+
+            @Override
+            public void remove() {
+                throw new java.lang.UnsupportedOperationException("You cannot call remove using a iterator");
+            }
+        };
+        return it;
     }
 }

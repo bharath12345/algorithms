@@ -13,7 +13,6 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
      * construct an empty randomized queue
      */
     public RandomizedQueue() {
-
     }
 
     /**
@@ -21,7 +20,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
      * @return
      */
     public boolean isEmpty() {
-
+        return false;
     }
 
     /**
@@ -29,7 +28,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
      * @return
      */
     public int size() {
-
+        return 0;
     }
 
     /**
@@ -51,6 +50,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         if (size() == 0) {
             throw new java.util.NoSuchElementException("trying to remove element from an empty deque");
         }
+        return null;
     }
 
     /**
@@ -61,6 +61,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         if (size() == 0) {
             throw new java.util.NoSuchElementException("trying to remove element from an empty deque");
         }
+        return null;
     }
 
     /**
@@ -68,6 +69,6 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
      * @return
      */
     public Iterator<Item> iterator() {
-
+        return null;
     }
 }
