@@ -119,6 +119,25 @@ public class Subset {
         }
     }
 
+    private static void unitTestRandomizedQueue() {
+        RandomizedQueue<String> stringQueue = new RandomizedQueue<String>();
+        while (!StdIn.isEmpty()) {
+            String string = StdIn.readString();
+            stringQueue.enqueue(string);
+        }
+
+        System.out.println("size = " + stringQueue.size());
+
+        for (String string : stringQueue) {
+            System.out.println("string = " + string);
+        }
+
+        int len = stringQueue.size();
+        for (int i = 0; i < len; i++) {
+            System.out.println("removed item = " + stringQueue.dequeue());
+        }
+    }
+
     /**
      *
      * @param args
@@ -127,12 +146,12 @@ public class Subset {
         int k = Integer.parseInt(args[0]);
         //System.out.println("k = " + k);
 
-        unitTestDequeFirst();
-        unitTestDequeLast();
+        //unitTestDequeFirst();
+        //unitTestDequeLast();
 
-        randomUsingDeque(k);
+        //randomUsingDeque(k);
 
-
+        unitTestRandomizedQueue();
 
     }
 }
