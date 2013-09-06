@@ -1,6 +1,6 @@
 package queues;
 
-import java.util.*;
+import java.util.Iterator;
 
 /**.
  * User: bharadwaj
@@ -193,9 +193,7 @@ public class Deque<Item> implements Iterable<Item> {
      */
     public Iterator<Item> iterator() {
         Iterator<Item> it = new Iterator<Item>() {
-
             private Node iteratingNode = topmost;
-
             @Override
             public boolean hasNext() {
                 if (iteratingNode != null) {
@@ -203,14 +201,12 @@ public class Deque<Item> implements Iterable<Item> {
                 }
                 return false;
             }
-
             @Override
             public Item next() {
                 Node temp = iteratingNode;
                 iteratingNode = iteratingNode.next;
                 return temp.item;
             }
-
             @Override
             public void remove() {
                 throw new java.lang.UnsupportedOperationException("You cannot call remove using a iterator");
