@@ -39,24 +39,32 @@ public class Brute {
             lines++;
         }
 
-        Point [] fourPoints = new Point[4];
+        //System.out.println("num of points = " + pointArray.length);
+        //for(Point point: pointArray) {
+        //    System.out.println(point);
+        //}
 
         for (int i = 0; i < pointArray.length; i++) {
             Point pointP = pointArray[i];
-            fourPoints[0] = pointP;
             //System.out.println("p = " + pointP);
 
             for (int j = i + 1; j < pointArray.length; j++) {
+                if (pointP.equals(pointArray[j])) {
+                    continue;
+                }
+
                 Point pointQ = pointArray[j];
-                fourPoints[1] = pointQ;
                 //System.out.println("q = " + pointQ);
 
                 double slopePQ = pointP.slopeTo(pointQ);
                 //System.out.println("slope pq = " + slopePQ);
 
                 for (int k = j + 1; k < pointArray.length; k++) {
+                    if (pointP.equals(pointArray[k]) || pointQ.equals(pointArray[k])) {
+                        continue;
+                    }
+
                     Point pointR = pointArray[k];
-                    fourPoints[2] = pointR;
                     //System.out.println("r = " + pointR);
 
                     double slopePR = pointP.slopeTo(pointR);
@@ -66,6 +74,15 @@ public class Brute {
                     }
 
                     for (int l = k + 1; l < pointArray.length; l++) {
+                        if (pointP.equals(pointArray[l]) || pointQ.equals(pointArray[l]) || pointR.equals(pointArray[l])) {
+                            continue;
+                        }
+
+                        Point [] fourPoints = new Point[4];
+                        fourPoints[0] = pointP;
+                        fourPoints[1] = pointQ;
+                        fourPoints[2] = pointR;
+
                         Point pointS = pointArray[l];
                         fourPoints[3] = pointS;
                         //System.out.println("s = " + pointS);
@@ -75,6 +92,8 @@ public class Brute {
                         if (slopePQ != slopePS) {
                             continue;
                         }
+
+                        //System.out.println("Before => " + fourPoints[0] + " -> " + fourPoints[1] + " -> " + fourPoints[2] + " -> " + fourPoints[3]);
 
                         Arrays.sort(fourPoints);
 

@@ -128,4 +128,26 @@ public class Point implements Comparable<Point> {
 
         return slope;
     }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    @Override
+    public boolean equals(final Object object) {
+        Point point = (Point) object;
+        if (point.getX() == x && point.getY() == y) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return x * y;
+    }
 }
