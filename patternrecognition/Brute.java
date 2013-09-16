@@ -2,6 +2,8 @@ package patternrecognition;
 
 import stdlib.In;
 
+import java.util.Arrays;
+
 /**
  * User: bharadwaj
  * Date: 16/09/13
@@ -37,12 +39,16 @@ public class Brute {
             lines++;
         }
 
+        Point [] fourPoints = new Point[4];
+
         for (int i = 0; i < pointArray.length; i++) {
             Point pointP = pointArray[i];
+            fourPoints[0] = pointP;
             //System.out.println("p = " + pointP);
 
             for (int j = i + 1; j < pointArray.length; j++) {
                 Point pointQ = pointArray[j];
+                fourPoints[1] = pointQ;
                 //System.out.println("q = " + pointQ);
 
                 double slopePQ = pointP.slopeTo(pointQ);
@@ -50,6 +56,7 @@ public class Brute {
 
                 for (int k = j + 1; k < pointArray.length; k++) {
                     Point pointR = pointArray[k];
+                    fourPoints[2] = pointR;
                     //System.out.println("r = " + pointR);
 
                     double slopePR = pointP.slopeTo(pointR);
@@ -60,6 +67,7 @@ public class Brute {
 
                     for (int l = k + 1; l < pointArray.length; l++) {
                         Point pointS = pointArray[l];
+                        fourPoints[3] = pointS;
                         //System.out.println("s = " + pointS);
 
                         double slopePS = pointP.slopeTo(pointS);
@@ -68,7 +76,9 @@ public class Brute {
                             continue;
                         }
 
-                        System.out.println(pointP + " -> " + pointQ + " -> " + pointR + " -> " + pointS);
+                        Arrays.sort(fourPoints);
+
+                        System.out.println(fourPoints[0] + " -> " + fourPoints[1] + " -> " + fourPoints[2] + " -> " + fourPoints[3]);
 
                     }
                 }
