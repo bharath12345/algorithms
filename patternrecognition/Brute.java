@@ -94,9 +94,7 @@ public class Brute {
                         }
 
                         //System.out.println("Before => " + fourPoints[0] + " -> " + fourPoints[1] + " -> " + fourPoints[2] + " -> " + fourPoints[3]);
-
                         Arrays.sort(fourPoints);
-
                         System.out.println(fourPoints[0] + " -> " + fourPoints[1] + " -> " + fourPoints[2] + " -> " + fourPoints[3]);
 
                     }
