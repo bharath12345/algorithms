@@ -45,16 +45,34 @@ public class Fast {
             //System.out.println("p = " + pointP);
 
             Point [] slopeArray = new Point[pointArray.length - (i + 1)];
-            for (int j = i + 1, k = 0; j < pointArray.length; j++, k++) {
+
+            for (int j = i + 1, k = 0; j < pointArray.length; j++) {
                 Point pointQ = pointArray[j];
                 //System.out.println("q = " + pointQ);
-                slopeArray[k] = pointQ;
+
+                if (pointP.equals(pointQ)) {
+                   //System.out.println(pointP + " and " + pointQ + " are equal");
+                   continue;
+                }
+
+                //double slopePQ = pointP.slopeTo(pointQ);
+                //if (sameSlopeMap.containsKey(slopePQ)) {
+                //    continue;
+                //}
+
+                slopeArray[k++] = pointQ;
+            }
+
+            if (slopeArray.length < 3) {
+                continue;
             }
 
             Arrays.sort(slopeArray, pointP.SLOPE_ORDER);
+
             //for (Point sortPoint: slopeArray) {
             //    System.out.println(sortPoint);
             //}
+            //System.out.println("---------");
 
             Set<Point> equalSlopedSet = new HashSet<Point>();
 
@@ -81,6 +99,7 @@ public class Fast {
             }
 
             if (slopeConsidered) {
+                //System.out.println("slope = " + slope + " already considered");
                 continue;
             }
 
@@ -93,6 +112,8 @@ public class Fast {
         Set<Double> slopes = sameSlopeMap.keySet();
         for (Double slope: slopes) {
             Set<Point> pointSet = sameSlopeMap.get(slope);
+            //System.out.println("slope = " + slope + " set size = " + pointSet.size());
+
             Point [] points = pointSet.toArray(new Point[pointSet.size()]);
             for (int i = 0; i < points.length; i++) {
                 for (int j = i + 1; j < points.length; j++) {

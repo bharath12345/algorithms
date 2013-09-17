@@ -28,6 +28,9 @@ public class Point implements Comparable<Point> {
             double withO1 = slopeTo(o1);
             double withO2 = slopeTo(o2);
 
+            //System.out.println("o1 = " + o1 + " o2 = " + o2);
+            //System.out.println("witho1 = " + withO1 + " witho2 = " + withO2);
+
             if (withO1 > withO2) {
                 return 1;
             } else if (withO1 < withO2) {
@@ -129,7 +132,7 @@ public class Point implements Comparable<Point> {
         return slope;
     }
 
-    public int getX() {
+    /*public int getX() {
         return x;
     }
 
@@ -149,5 +152,5 @@ public class Point implements Comparable<Point> {
     @Override
     public int hashCode() {
         return x * y;
-    }
+    }*/
 }
