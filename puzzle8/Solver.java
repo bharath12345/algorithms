@@ -102,11 +102,21 @@ public class Solver {
             }
 
             for (Board neighbor : minPriorityNode.board.neighbors()) {
+                if (minPriorityNode.previousNode != null) {
+                   if (minPriorityNode.previousNode.equals(neighbor)) {
+                       continue;
+                   }
+                }
                 SearchNode neighborNode = new SearchNode(neighbor, (minPriorityNode.moves + 1), minPriorityNode);
                 searchBoardPQ.insert(neighborNode);
             }
 
             for (Board neighbor: minSwappedPriorityNode.board.neighbors()) {
+                if (minSwappedPriorityNode.previousNode != null) {
+                    if (minSwappedPriorityNode.previousNode.equals(neighbor)) {
+                        continue;
+                    }
+                }
                 SearchNode neighborNode = new SearchNode(neighbor, (minSwappedPriorityNode.moves + 1), minSwappedPriorityNode);
                 swappedBoardPQ.insert(neighborNode);
             }

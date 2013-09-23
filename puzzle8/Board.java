@@ -75,7 +75,15 @@ public final class Board {
      * @return
      */
     public int hamming() {
-        return 0;
+        int priority = 0;
+        for (int i = 0; i < dimension; i++) {
+            for (int j = 0; j < dimension; j++) {
+                if (blocks[i][j] != ((i * dimension) + j + 1)) {
+                    priority++;
+                }
+            }
+        }
+        return priority;
     }
 
     /**
@@ -83,7 +91,20 @@ public final class Board {
      * @return
      */
     public int manhattan() {
-        return 0;
+        int priority = 0;
+        for (int i = 0; i < dimension; i++) {
+            for (int j = 0; j < dimension; j++) {
+                if (blocks[i][j] == ((i * dimension) + j + 1)) {
+                    // its in proper position
+                } else {
+                    int properRow = blocks[i][j] / dimension;
+                    int properCol = blocks[i][j] % dimension;
+                    priority += Math.abs(properRow - i);
+                    priority += Math.abs(properCol - j);
+                }
+            }
+        }
+        return priority;
     }
 
     /**
@@ -229,8 +250,37 @@ public final class Board {
 
         } else if ((i == 0) || (j == 0) || (i == (dimension - 1)) || (j == (dimension - 1)))  {
 
-        } else {
+            if (i == 0) {
+                int positionZero = j;
+                neighbors.add(new Board(swap(blocks, positionZero, positionZero - 1)));
+                neighbors.add(new Board(swap(blocks, positionZero, positionZero + 1)));
+                neighbors.add(new Board(swap(blocks, positionZero, positionZero + dimension)));
 
+            } else if (i == (dimension - 1)) {
+                int positionZero = (i * dimension) + j;
+                neighbors.add(new Board(swap(blocks, positionZero, positionZero - 1)));
+                neighbors.add(new Board(swap(blocks, positionZero, positionZero + 1)));
+                neighbors.add(new Board(swap(blocks, positionZero, positionZero - dimension)));
+
+            } else if (j == 0) {
+                int positionZero = (i * dimension);
+                neighbors.add(new Board(swap(blocks, positionZero, positionZero + 1)));
+                neighbors.add(new Board(swap(blocks, positionZero, positionZero + dimension)));
+                neighbors.add(new Board(swap(blocks, positionZero, positionZero - dimension)));
+
+            } else {
+                int positionZero = (i * dimension) + j;
+                neighbors.add(new Board(swap(blocks, positionZero, positionZero - 1)));
+                neighbors.add(new Board(swap(blocks, positionZero, positionZero + dimension)));
+                neighbors.add(new Board(swap(blocks, positionZero, positionZero - dimension)));
+            }
+
+        } else {
+            int positionZero = (i * dimension) + j;
+            neighbors.add(new Board(swap(blocks, positionZero, positionZero - 1)));
+            neighbors.add(new Board(swap(blocks, positionZero, positionZero + 1)));
+            neighbors.add(new Board(swap(blocks, positionZero, positionZero + dimension)));
+            neighbors.add(new Board(swap(blocks, positionZero, positionZero - dimension)));
         }
 
         return neighbors;
