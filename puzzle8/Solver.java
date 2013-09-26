@@ -1,8 +1,11 @@
 package puzzle8;
 
 import algs4.MinPQ;
+import stdlib.In;
+import stdlib.StdOut;
 
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * User: bharadwaj
@@ -50,6 +53,14 @@ public class Solver {
             int searchNodePriority = o.board.manhattan() + o.moves;
             return currentNodePriority - searchNodePriority;
         }
+
+        public int priority() {
+            return moves + board.manhattan();
+        }
+
+        public String toString() {
+            return "priority = " + priority() + ", moves = " + moves + ", board = " + board;
+        }
     };
 
     /**
@@ -86,40 +97,53 @@ public class Solver {
         swappedBoardPQ.insert(swappedNode);
 
         while (true) {
-            SearchNode minPriorityNode = searchBoardPQ.delMin();
-            SearchNode minSwappedPriorityNode = swappedBoardPQ.delMin();
+            /*SearchNode minPriorityNode = searchBoardPQ.delMin();
+            System.out.println("min priority node: " + minPriorityNode);
 
             if (minPriorityNode.board.isGoal()) {
                 isSolvable = true;
                 solution = minPriorityNode;
                 break;
-            }
+            }*/
 
+            SearchNode minSwappedPriorityNode = swappedBoardPQ.delMin();
+            System.out.println("min priority swapped node: " + minSwappedPriorityNode);
             if (minSwappedPriorityNode.board.isGoal()) {
                 isSolvable = false;
                 solution = null;
                 break;
             }
 
-            for (Board neighbor : minPriorityNode.board.neighbors()) {
+            /*List<Board> neighbors = (List<Board>) minPriorityNode.board.neighbors();
+            System.out.println("number of neighbors = " + neighbors.size());
+
+            for (Board neighbor : neighbors) {
                 if (minPriorityNode.previousNode != null) {
                    if (minPriorityNode.previousNode.equals(neighbor)) {
                        continue;
                    }
                 }
-                SearchNode neighborNode = new SearchNode(neighbor, (minPriorityNode.moves + 1), minPriorityNode);
-                searchBoardPQ.insert(neighborNode);
-            }
 
-            for (Board neighbor: minSwappedPriorityNode.board.neighbors()) {
+
+                SearchNode neighborNode = new SearchNode(neighbor, (minPriorityNode.moves + 1), minPriorityNode);
+                System.out.println("search node = " + neighborNode);
+                searchBoardPQ.insert(neighborNode);
+            }*/
+
+            List<Board> neighbors = (List<Board>) minSwappedPriorityNode.board.neighbors();
+            System.out.println("number of neighbors = " + neighbors.size());
+
+            for (Board neighbor: neighbors) {
                 if (minSwappedPriorityNode.previousNode != null) {
                     if (minSwappedPriorityNode.previousNode.equals(neighbor)) {
                         continue;
                     }
                 }
                 SearchNode neighborNode = new SearchNode(neighbor, (minSwappedPriorityNode.moves + 1), minSwappedPriorityNode);
+                System.out.println("search node = " + neighborNode);
                 swappedBoardPQ.insert(neighborNode);
             }
+            System.exit(0);
         }
     }
 
@@ -202,6 +226,25 @@ public class Solver {
      * @param args
      */
     public static void main(final String[] args) {
+        // create initial board from file
+        In in = new In(args[0]);
+        int N = in.readInt();
+        int[][] blocks = new int[N][N];
+        for (int i = 0; i < N; i++)
+            for (int j = 0; j < N; j++)
+                blocks[i][j] = in.readInt();
+        Board initial = new Board(blocks);
 
+        // solve the puzzle
+        Solver solver = new Solver(initial);
+
+        // print solution to standard output
+        if (!solver.isSolvable())
+            StdOut.println("No solution possible");
+        else {
+            StdOut.println("Minimum number of moves = " + solver.moves());
+            for (Board board : solver.solution())
+                StdOut.println(board);
+        }
     }
 }

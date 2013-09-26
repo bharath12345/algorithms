@@ -94,6 +94,9 @@ public final class Board {
         int priority = 0;
         for (int i = 0; i < dimension; i++) {
             for (int j = 0; j < dimension; j++) {
+                if (i == (dimension - 1) && j == (dimension - 1)) {
+                    continue;
+                }
                 if (blocks[i][j] == ((i * dimension) + j + 1)) {
                     // its in proper position
                 } else {
@@ -115,6 +118,9 @@ public final class Board {
         for (int i = 0; i < dimension; i++) {
             for (int j = 0; j < dimension; j++) {
                 int value = (i * dimension) + (j + 1);
+                if (i == (dimension - 1) && j == (dimension - 1)) {
+                    value = 0;
+                }
                 if (blocks[i][j] != value) {
                     return false;
                 }
@@ -128,7 +134,16 @@ public final class Board {
      * @return
      */
     public Board twin() {
-        return new Board(swap(blocks, 0, 1));
+        if(blocks[0][0] != 0 && blocks[0][1] != 0){
+            return new Board(swap(blocks, 0, 1));
+        }
+
+        // one of values in 0 or 1st position is a 0
+        // swap last row, col = 0 & 1 (unsolvable example from the spec)
+        int firsElementIntLastRow = (dimension * dimension) - dimension;
+        int secondElementInLastRow = firsElementIntLastRow + 1;
+
+        return new Board(swap(blocks, firsElementIntLastRow, secondElementInLastRow));
     }
 
     /**
@@ -153,12 +168,14 @@ public final class Board {
         int colTwo = positionTwo % dimension;
         int rowTwo = positionTwo / dimension;
 
-        if (((colOne - colTwo) > 1) || (colOne - colTwo) < 1) {
-            System.out.println("cannot swap columns which are not adjacent");
+        if (((colOne - colTwo) > 1) || (colOne - colTwo) < -1) {
+            System.out.println("cannot swap columns which are not adjacent = {" + colOne + ", " + colTwo + "}");
+            System.exit(0);
         }
 
-        if (((rowOne - rowTwo) > 1) || (rowOne - rowTwo) < 1) {
-            System.out.println("cannot swap rows which are not adjacent");
+        if (((rowOne - rowTwo) > 1) || (rowOne - rowTwo) < -1) {
+            System.out.println("cannot swap rows which are not adjacent = {" + rowOne + ", " + rowTwo + "}");
+            System.exit(0);
         }
 
         int valueOne = twinBlocks[rowOne][colOne];
@@ -211,13 +228,15 @@ public final class Board {
          */
 
         int i = 0, j = 0;
-        for (i = 0; i < dimension; i++) {
+        rowloop: for (i = 0; i < dimension; i++) {
             for (j = 0; j < dimension; j++) {
                 if (blocks[i][j] == 0) {
-                    break;
+                    break rowloop;
                 }
             }
         }
+
+        System.out.println("position of 0 = {" + i + ", " + j + "}");
 
         // now [i, j] hold the position of 0
 
