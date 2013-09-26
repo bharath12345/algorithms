@@ -97,25 +97,25 @@ public class Solver {
         swappedBoardPQ.insert(swappedNode);
 
         while (true) {
-            /*SearchNode minPriorityNode = searchBoardPQ.delMin();
-            System.out.println("min priority node: " + minPriorityNode);
+            SearchNode minPriorityNode = searchBoardPQ.delMin();
+            //System.out.println("min priority node: " + minPriorityNode);
 
             if (minPriorityNode.board.isGoal()) {
                 isSolvable = true;
                 solution = minPriorityNode;
                 break;
-            }*/
+            }
 
             SearchNode minSwappedPriorityNode = swappedBoardPQ.delMin();
-            System.out.println("min priority swapped node: " + minSwappedPriorityNode);
+            //System.out.println("min priority swapped node: " + minSwappedPriorityNode);
             if (minSwappedPriorityNode.board.isGoal()) {
                 isSolvable = false;
                 solution = null;
                 break;
             }
 
-            /*List<Board> neighbors = (List<Board>) minPriorityNode.board.neighbors();
-            System.out.println("number of neighbors = " + neighbors.size());
+            List<Board> neighbors = (List<Board>) minPriorityNode.board.neighbors();
+            //System.out.println("number of neighbors = " + neighbors.size());
 
             for (Board neighbor : neighbors) {
                 if (minPriorityNode.previousNode != null) {
@@ -124,14 +124,27 @@ public class Solver {
                    }
                 }
 
+                Iterator treeIterator = searchBoardPQ.iterator();
+                boolean found = false;
+                while (treeIterator.hasNext()) {
+                    SearchNode node = (SearchNode) treeIterator.next();
+                    if(neighbor.equals(node.board)) {
+                        // this node already considered in the tree... dont add
+                        found = true;
+                        break;
+                    }
+                }
+                if(found == true) {
+                    continue;
+                }
 
                 SearchNode neighborNode = new SearchNode(neighbor, (minPriorityNode.moves + 1), minPriorityNode);
-                System.out.println("search node = " + neighborNode);
+                //System.out.println("search node = " + neighborNode);
                 searchBoardPQ.insert(neighborNode);
-            }*/
+            }
 
-            List<Board> neighbors = (List<Board>) minSwappedPriorityNode.board.neighbors();
-            System.out.println("number of neighbors = " + neighbors.size());
+            neighbors = (List<Board>) minSwappedPriorityNode.board.neighbors();
+            //System.out.println("number of neighbors = " + neighbors.size());
 
             for (Board neighbor: neighbors) {
                 if (minSwappedPriorityNode.previousNode != null) {
@@ -139,11 +152,26 @@ public class Solver {
                         continue;
                     }
                 }
+
+                Iterator treeIterator = swappedBoardPQ.iterator();
+                boolean found = false;
+                while (treeIterator.hasNext()) {
+                    SearchNode node = (SearchNode) treeIterator.next();
+                    if(neighbor.equals(node.board)) {
+                        // this node already considered in the tree... dont add
+                        found = true;
+                        break;
+                    }
+                }
+                if(found == true) {
+                    continue;
+                }
+
                 SearchNode neighborNode = new SearchNode(neighbor, (minSwappedPriorityNode.moves + 1), minSwappedPriorityNode);
-                System.out.println("search node = " + neighborNode);
+                //System.out.println("search node = " + neighborNode);
                 swappedBoardPQ.insert(neighborNode);
             }
-            System.exit(0);
+            //if(minSwappedPriorityNode.moves == 2) System.exit(0);
         }
     }
 
@@ -227,6 +255,8 @@ public class Solver {
      */
     public static void main(final String[] args) {
         // create initial board from file
+
+        //System.out.println("Start time = " + Calendar.getInstance().getTimeInMillis());
         In in = new In(args[0]);
         int N = in.readInt();
         int[][] blocks = new int[N][N];
@@ -240,11 +270,14 @@ public class Solver {
 
         // print solution to standard output
         if (!solver.isSolvable())
-            StdOut.println("No solution possible");
+            StdOut.println("No solution possible");//. End time = " + Calendar.getInstance().getTimeInMillis());
         else {
-            StdOut.println("Minimum number of moves = " + solver.moves());
+            StdOut.println("Minimum number of moves = " + solver.moves() + "\n");
             for (Board board : solver.solution())
-                StdOut.println(board);
+                StdOut.print(board);
+
+            //System.out.println("end time = " + Calendar.getInstance().getTimeInMillis());
         }
+
     }
 }

@@ -236,7 +236,7 @@ public final class Board {
             }
         }
 
-        System.out.println("position of 0 = {" + i + ", " + j + "}");
+        //System.out.println("position of 0 = {" + i + ", " + j + "}");
 
         // now [i, j] hold the position of 0
 
