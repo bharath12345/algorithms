@@ -5,7 +5,6 @@ import stdlib.In;
 import stdlib.StdOut;
 
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * User: bharadwaj
@@ -114,10 +113,10 @@ public class Solver {
                 break;
             }
 
-            List<Board> neighbors = (List<Board>) minPriorityNode.board.neighbors();
+            //List<Board> neighbors = (List<Board>) minPriorityNode.board.neighbors();
             //System.out.println("number of neighbors = " + neighbors.size());
 
-            for (Board neighbor : neighbors) {
+            for (Board neighbor : minPriorityNode.board.neighbors()) {
                 if (minPriorityNode.previousNode != null) {
                    if (minPriorityNode.previousNode.equals(neighbor)) {
                        continue;
@@ -143,10 +142,10 @@ public class Solver {
                 searchBoardPQ.insert(neighborNode);
             }
 
-            neighbors = (List<Board>) minSwappedPriorityNode.board.neighbors();
+            //neighbors = (List<Board>) minSwappedPriorityNode.board.neighbors();
             //System.out.println("number of neighbors = " + neighbors.size());
 
-            for (Board neighbor: neighbors) {
+            for (Board neighbor: minSwappedPriorityNode.board.neighbors()) {
                 if (minSwappedPriorityNode.previousNode != null) {
                     if (minSwappedPriorityNode.previousNode.equals(neighbor)) {
                         continue;
@@ -199,7 +198,7 @@ public class Solver {
      *
      * @return
      */
-    public SearchNode findFirstInSolution() {
+    private SearchNode findFirstInSolution() {
         SearchNode finder = solution;
         finder.nextNode = null;
         while (finder.previousNode != null) {

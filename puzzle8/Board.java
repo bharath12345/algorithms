@@ -9,7 +9,7 @@ import java.util.List;
  * Date: 19/09/13
  * Time: 7:22 PM
  */
-public final class Board {
+public class Board {
 
     /**
      * block array
@@ -24,7 +24,7 @@ public final class Board {
     /**
      * first n prime numbers where n = dimension
      */
-    private int[] primes;
+    //private int[] primes;
 
     /**
      * construct a board from an N-by-N array of blocks (where blocks[i][j] = block in row i, column j)
@@ -37,7 +37,7 @@ public final class Board {
             throw new java.lang.UnsupportedOperationException("You cannot have dimension less than 2");
         }
 
-        primes = new int[dimension];
+        /*primes = new int[dimension];
         int number = 2;
         for (int i = 0; i < dimension; i++){
             if (isPrime(number)){
@@ -45,7 +45,7 @@ public final class Board {
                 primes[i] = number;
             }
             number++;
-        }
+        }*/
     }
 
     /**
@@ -78,6 +78,14 @@ public final class Board {
         int priority = 0;
         for (int i = 0; i < dimension; i++) {
             for (int j = 0; j < dimension; j++) {
+                if (i == (dimension - 1) && j == (dimension - 1)) {
+                    // dont check last block in the grid
+                    continue;
+                }
+                if(blocks[i][j] == 0) {
+                    // dont consider the block that has 0 in it
+                    continue;
+                }
                 if (blocks[i][j] != ((i * dimension) + j + 1)) {
                     priority++;
                 }
@@ -95,6 +103,11 @@ public final class Board {
         for (int i = 0; i < dimension; i++) {
             for (int j = 0; j < dimension; j++) {
                 if (i == (dimension - 1) && j == (dimension - 1)) {
+                    // dont check last block in the grid
+                    continue;
+                }
+                if(blocks[i][j] == 0) {
+                    // dont consider the block that has 0 in it
                     continue;
                 }
                 if (blocks[i][j] == ((i * dimension) + j + 1)) {
@@ -102,6 +115,14 @@ public final class Board {
                 } else {
                     int properRow = blocks[i][j] / dimension;
                     int properCol = blocks[i][j] % dimension;
+
+                    if(properCol == 0) {
+                        properRow -= 1;
+                        properCol = (dimension - 1);
+                    } else {
+                        properCol -= 1;
+                    }
+
                     priority += Math.abs(properRow - i);
                     priority += Math.abs(properCol - j);
                 }
@@ -203,13 +224,13 @@ public final class Board {
      * multiply by primes
      * @return
      */
-    public int hashCode() {
+    /*private int hashCode() {
         long hash = 0;
         for (int i = 0; i < dimension; i++) {
             hash += ((i + 1) * primes[i]);
         }
         return (int) hash;
-    }
+    }*/
 
     /**
      * all neighboring boards
