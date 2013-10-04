@@ -1,6 +1,11 @@
 package kdtree;
 
-import algs4.*;
+import algs4.Point2D;
+import stdlib.Draw;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TreeSet;
 
 /**
  * User: bharadwaj
@@ -9,11 +14,13 @@ import algs4.*;
  */
 public class PointSET {
 
+    TreeSet<Point2D> pointSet = null;
+
     /**
      * construct an empty set of points
      */
     public PointSET() {
-
+        pointSet = new TreeSet<Point2D>();
     }
 
     /**
@@ -21,6 +28,9 @@ public class PointSET {
      * @return
      */
     public boolean isEmpty() {
+        if (pointSet.size() == 0) {
+            return true;
+        }
         return false;
     }
 
@@ -29,7 +39,7 @@ public class PointSET {
      * @return
      */
     public int size() {
-        return 0;
+        return pointSet.size();
     }
 
     /**
@@ -37,7 +47,9 @@ public class PointSET {
      * @param p
      */
     public void insert(Point2D p) {
-
+        if (!pointSet.contains(p)) {
+            pointSet.add(p);
+        }
     }
 
     /**
@@ -46,6 +58,9 @@ public class PointSET {
      * @return
      */
     public boolean contains(Point2D p) {
+        if (pointSet.contains(p)) {
+            return true;
+        }
         return false;
     }
 
@@ -53,7 +68,10 @@ public class PointSET {
      * draw all of the points to standard draw
      */
     public void draw() {
-
+        Draw draw = new Draw();
+        for(Point2D p: pointSet) {
+            draw.point(p.x(), p.y());
+        }
     }
 
     /**
@@ -62,15 +80,32 @@ public class PointSET {
      * @return
      */
     public Iterable<Point2D> range(RectHV rect) {
-        return null;
+        List<Point2D> inRange = new ArrayList<Point2D>();
+
+        return inRange;
     }
 
     /**
      * a nearest neighbor in the set to p; null if set is empty
-     * @param p
+     * @param that
      * @return
      */
-    public Point2D nearest(Point2D p) {
-        return null;
+    public Point2D nearest(Point2D that) {
+        TreeSet<Point2D> pointSetDistance = new TreeSet<Point2D>(that.DISTANCE_TO_ORDER);
+        pointSetDistance.addAll(pointSet);
+
+        System.out.println("nearest = " + pointSetDistance.first() + " farthest = " + pointSetDistance.last());
+        return pointSetDistance.first();
+
+        /*Point2D nearest = null;
+        double distance = 0;
+        for(Point2D p: pointSet) {
+            double newDistance = p.distanceTo(that);
+            if (distance > newDistance) {
+                distance = newDistance;
+                nearest = p;
+            }
+        }
+        return nearest;*/
     }
 }
