@@ -81,7 +81,11 @@ public class PointSET {
      */
     public Iterable<Point2D> range(RectHV rect) {
         List<Point2D> inRange = new ArrayList<Point2D>();
-
+        for(Point2D p: pointSet) {
+            if (rect.contains(p)) {
+                inRange.add(p);
+            }
+        }
         return inRange;
     }
 
@@ -94,18 +98,40 @@ public class PointSET {
         TreeSet<Point2D> pointSetDistance = new TreeSet<Point2D>(that.DISTANCE_TO_ORDER);
         pointSetDistance.addAll(pointSet);
 
-        System.out.println("nearest = " + pointSetDistance.first() + " farthest = " + pointSetDistance.last());
+        //System.out.println("nearest = " + pointSetDistance.first() + " farthest = " + pointSetDistance.last());
         return pointSetDistance.first();
+    }
 
-        /*Point2D nearest = null;
-        double distance = 0;
+    private Point2D bruteNear(Point2D that) {
+        Point2D nearest = null;
+        double distance = Double.POSITIVE_INFINITY;
         for(Point2D p: pointSet) {
-            double newDistance = p.distanceTo(that);
+            double newDistance = Math.abs(p.distanceTo(that));
             if (distance > newDistance) {
                 distance = newDistance;
                 nearest = p;
             }
         }
-        return nearest;*/
+        return nearest;
+    }
+
+    public static void main(String[] args) {
+        PointSET pointSET = new PointSET();
+        int objCount = Integer.MAX_VALUE/500;
+        System.out.println("num of objects = " + objCount);
+        for(int i = 0; i < objCount; i++) {
+            Point2D point2D = new Point2D(i, i);
+            pointSET.insert(point2D);
+        }
+        Point2D origin = new Point2D(0, 0);
+
+        System.out.println("start time = " + System.currentTimeMillis());
+        Point2D nearest = pointSET.nearest(origin);
+        System.out.println("nearest = " + nearest + " time = " + System.currentTimeMillis());
+        nearest = pointSET.bruteNear(origin);
+        System.out.println("nearest = " + nearest + " time = " + System.currentTimeMillis());
     }
 }
+
+// using comparator: 1380873329950 - 1380873329186 = 764
+// brute force function: 1380873329984 - 1380873329950 = 34
