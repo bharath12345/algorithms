@@ -3,7 +3,9 @@ package kdtree;
 import algs4.*;
 import stdlib.*;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * User: bharadwaj
@@ -15,25 +17,25 @@ public class KdTree {
     // if difference is less than EPSILON then the values are equal
     private final static double EPSILON = 0.0000001;
 
-    class TwoDTree<P extends Point2D> implements Iterable<Point2D> {
+    class Node {
+        private double x;
+        private double y;
+        private Node left, right;  // left and right subtrees
+        private int H;             // height of the subtree
 
-        private class Node {
-            private double x;
-            private double y;
-            private Node left, right;  // left and right subtrees
-            private int H;             // height of the subtree
-
-            public Node(double x, double y, int H) {
-                this.x = x;
-                this.y = y;
-                this.H = H;
-            }
+        public Node(double x, double y, int H) {
+            this.x = x;
+            this.y = y;
+            this.H = H;
         }
+    }
+
+    class TwoDTree<P extends Point2D> implements Iterable<Point2D> {
 
         /**
          * root of the 2d-tree
          */
-        private Node root = null;
+        public Node root = null;
 
         /**
          * size
@@ -58,6 +60,7 @@ public class KdTree {
          *  Search 2d Tree for a given point
          ***********************************************************************/
         public boolean contains(P p) {
+            System.out.println("searching node = " + p);
             return get(p) != null;
         }
 
@@ -78,6 +81,7 @@ public class KdTree {
          *  Insert the point
          ***********************************************************************/
         public boolean add(P p) {
+            System.out.println("adding node = " + p);
             if(!contains(p)) {
                 size++;
             }
@@ -112,6 +116,7 @@ public class KdTree {
     }
 
     TwoDTree<Point2D> pointSet = null;
+    double xmin = 0, ymin = 0;
 
     /**
      * construct an empty set of points
@@ -173,12 +178,29 @@ public class KdTree {
 
     /**
      * all points in the set that are inside the rectangle
-     * @param rect
+     * @param rectHV
      * @return
      */
-    public Iterable<Point2D> range(RectHV rect) {
-        //ToDo: Use 2d-tree algorithm per the specification
-        return null;
+    public Iterable<Point2D> range(RectHV rectHV) {
+        List<Point2D> inRange = new ArrayList<Point2D>();
+        search(inRange, pointSet.root, rectHV);
+        return inRange;
+    }
+
+    private void search(List<Point2D> inRange, Node node, RectHV rectHV) {
+        if(node == null) return;
+
+        double xmax = node.x, ymax = node.y;
+        RectHV rect = new RectHV(xmin, ymin, xmax, ymax);
+        if(rectHV.intersects(rect)) {
+            search(inRange, node.left, rectHV);
+            search(inRange, node.right, rectHV);
+
+            Point2D point = new Point2D(node.x, node.y);
+            if(rectHV.contains(point)) {
+                inRange.add(point);
+            }
+        }
     }
 
     /**
@@ -189,6 +211,40 @@ public class KdTree {
     public Point2D nearest(Point2D p) {
         //ToDo: Use 2d-tree algorithm per the specification
         return null;
+    }
+
+    public static void main(String[] args) {
+        KdTree kdTree = new KdTree();
+        double [][] obj = {{0.7, 0.2}, {0.5, 0.4}, {0.2, 0.3}, {0.4, 0.7}, {0.9, 0.6}};
+        System.out.println("num of objects = " + obj.length);
+        for(int i = 0; i < obj.length; i++) {
+            Point2D point2D = new Point2D(obj[i][0], obj[i][1]);
+            kdTree.insert(point2D);
+        }
+        Point2D origin = new Point2D(0, 0);
+        RectHV rectHV = new RectHV(0.1, 0.1, 0.9, 0.9);
+
+        long t1 = System.currentTimeMillis();
+        System.out.println("nearest start time = " + t1);
+        Point2D nearest = kdTree.nearest(origin);
+        long t2 = System.currentTimeMillis();
+        System.out.println("nearest = " + nearest + " time = " + (t2 - t1));
+
+        Iterable<Point2D> inRange = kdTree.range(rectHV);
+        long t3 = System.currentTimeMillis();
+        System.out.println("finished points in range. time = " + (t3 - t2));
+
+        int i = 0;
+        for(Point2D p: inRange) {
+            i++;
+        }
+        long t4 = System.currentTimeMillis();
+        System.out.println("count of points in range = " + i + " time = " + (t4 - t3));
+
+        System.out.println("******* Level order traversal *******");
+        for(Point2D p: kdTree.pointSet) {
+            System.out.println("point = " + p);
+        }
     }
 
 }

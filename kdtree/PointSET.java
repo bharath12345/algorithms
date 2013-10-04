@@ -69,6 +69,8 @@ public class PointSET {
      */
     public void draw() {
         Draw draw = new Draw();
+        draw.setPenColor(Draw.BLACK);
+        draw.setPenRadius(.01);
         for(Point2D p: pointSet) {
             draw.point(p.x(), p.y());
         }
