@@ -95,14 +95,6 @@ public class PointSET {
      * @return
      */
     public Point2D nearest(Point2D that) {
-        TreeSet<Point2D> pointSetDistance = new TreeSet<Point2D>(that.DISTANCE_TO_ORDER);
-        pointSetDistance.addAll(pointSet);
-
-        //System.out.println("nearest = " + pointSetDistance.first() + " farthest = " + pointSetDistance.last());
-        return pointSetDistance.first();
-    }
-
-    private Point2D bruteNear(Point2D that) {
         Point2D nearest = null;
         double distance = Double.POSITIVE_INFINITY;
         for(Point2D p: pointSet) {
@@ -124,14 +116,23 @@ public class PointSET {
             pointSET.insert(point2D);
         }
         Point2D origin = new Point2D(0, 0);
+        RectHV rectHV = new RectHV(1, 1, 2, 2);
 
-        System.out.println("start time = " + System.currentTimeMillis());
+        long t1 = System.currentTimeMillis();
+        System.out.println("nearest start time = " + t1);
         Point2D nearest = pointSET.nearest(origin);
-        System.out.println("nearest = " + nearest + " time = " + System.currentTimeMillis());
-        nearest = pointSET.bruteNear(origin);
-        System.out.println("nearest = " + nearest + " time = " + System.currentTimeMillis());
+        long t2 = System.currentTimeMillis();
+        System.out.println("nearest = " + nearest + " time = " + (t2 - t1));
+
+        Iterable<Point2D> inRange = pointSET.range(rectHV);
+        long t3 = System.currentTimeMillis();
+        System.out.println("finished points in range. time = " + (t3 - t2));
+
+        int i = 0;
+        for(Point2D p: inRange) {
+            i++;
+        }
+        long t4 = System.currentTimeMillis();
+        System.out.println("count of points in range = " + i + " time = " + (t4 - t3));
     }
 }
-
-// using comparator: 1380873329950 - 1380873329186 = 764
-// brute force function: 1380873329984 - 1380873329950 = 34
