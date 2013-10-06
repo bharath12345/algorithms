@@ -28,6 +28,11 @@ public class KdTree {
             this.y = y;
             this.H = H;
         }
+
+        @Override
+        public String toString() {
+            return "(" + x + ", " + y + ")";
+        }
     }
 
     class TwoDTree<P extends Point2D> implements Iterable<Point2D> {
@@ -47,13 +52,13 @@ public class KdTree {
         }
 
         private double compare(Node node, P p) {
-            if(node.H % 2 != 0) {
+            if(node.H % 2 == 0) {
                 // if its odd position in tree hierarchy, then, compare x-axis values
-                return p.x() - node.x;
+                return p.x() - node.x ;
             }
 
             // if its even position in tree hierarchy, then, compare y-axis values
-            return  p.y() - node.y;
+            return p.y() - node.y;
         }
 
         /***********************************************************************
@@ -71,31 +76,60 @@ public class KdTree {
         private Node get(Node node, P p) {
             if (node == null) return null;
             double cmp = compare(node, p);
-            if      (cmp > 0 && cmp < EPSILON)      return node;
-            if      (cmp < 0 && cmp > -EPSILON)     return node;
-            else if (cmp < 0)                       return get(node.left, p);
-            else /*if (cmp > 0)*/                   return get(node.right, p);
+            if (cmp > 0 && cmp < EPSILON) {
+                return node;
+            }else if (cmp < 0 && cmp > -EPSILON){
+                return node;
+            } else if (cmp < 0){
+                return get(node.left, p);
+            } else /*if (cmp > 0)*/ {
+                return get(node.right, p);
+            }
         }
 
         /***********************************************************************
          *  Insert the point
          ***********************************************************************/
         public boolean add(P p) {
-            System.out.println("adding node = " + p);
             if(!contains(p)) {
                 size++;
+            } else {
+                System.out.println("node = " + p + " already in the tree... not adding it again");
+                return false;
             }
             root = add(root, p, 0);
             return true;
         }
 
         private Node add(Node node, P p, int H) {
-            if (node == null) return new Node(p.x(), p.y(), H);
+            if (node == null) {
+                System.out.println("adding new node = " + p);
+                return new Node(p.x(), p.y(), H);
+            }
             double cmp = compare(node, p);
-            if      (cmp > 0 && cmp < EPSILON)      { }
-            else if (cmp < 0 && cmp > -EPSILON)     { }
-            else if (cmp < 0)                       node.left  = add(node.left, p, node.H + 1);
-            else if (cmp > 0)                       node.right = add(node.right, p, node.H + 1);
+            System.out.println("compare value = " + cmp + " H = " + H);
+
+            if (cmp > 0 && cmp < EPSILON) {
+                System.out.println("not adding almost equal node = " + p + " cmp = " + cmp);
+            } else if (cmp < 0 && cmp > -EPSILON) {
+                System.out.println("not adding almost equal node = " + p + " cmp = " + cmp);
+            } else if (cmp < 0) {
+                Node leftNode = add(node.left, p, node.H + 1);
+                if(node.left == null) {
+                    node.left = leftNode;
+                    System.out.println("adding node = " + p + " to the LEFT of = " + node);
+                } else {
+                    System.out.println("moving node = " + p + " to the LEFT of = " + node);
+                }
+            } else if (cmp > 0) {
+                Node rightNode = add(node.right, p, node.H + 1);
+                if(node.right == null) {
+                    node.right = rightNode;
+                    System.out.println("adding node = " + p + " to the RIGHT of = " + node);
+                } else {
+                    System.out.println("moving node = " + p + " to the RIGHT of = " + node);
+                }
+            }
             return node;
         }
 
@@ -149,9 +183,8 @@ public class KdTree {
      * @param p
      */
     public void insert(Point2D p) {
-        if (!pointSet.contains(p)) {
-            pointSet.add(p);
-        }
+        System.out.println("\n\nadding node = " + p);
+        pointSet.add(p);
     }
 
     /**
@@ -215,7 +248,7 @@ public class KdTree {
 
     public static void main(String[] args) {
         KdTree kdTree = new KdTree();
-        double [][] obj = {{0.7, 0.2}, {0.5, 0.4}, {0.2, 0.3}, {0.4, 0.7}, {0.9, 0.6}};
+        double [][] obj = {{0.7, 0.1}, {0.5, 0.4}, {0.2, 0.3}, {0.4, 0.7}, {0.9, 0.6}, {0.8, 0.5}};
         System.out.println("num of objects = " + obj.length);
         for(int i = 0; i < obj.length; i++) {
             Point2D point2D = new Point2D(obj[i][0], obj[i][1]);
