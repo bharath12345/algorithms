@@ -22,16 +22,18 @@ public class KdTree {
         private double y;
         private Node left, right;  // left and right subtrees
         private int H;             // height of the subtree
+        private RectHV rectHV;
 
-        public Node(double x, double y, int H) {
+        public Node(double x, double y, int H, RectHV rectHV) {
             this.x = x;
             this.y = y;
             this.H = H;
+            this.rectHV = rectHV;
         }
 
         @Override
         public String toString() {
-            return "(" + x + ", " + y + ")";
+            return "(" + x + ", " + y + ")," + "{h = " + H + "},(rect = " + rectHV + ")";
         }
     }
 
@@ -51,14 +53,40 @@ public class KdTree {
             return size;
         }
 
-        private double compare(Node node, P p) {
-            if(node.H % 2 == 0) {
+        private double compare(Node node, P p, int H) {
+            if(H % 2 != 0) {
                 // if its odd position in tree hierarchy, then, compare x-axis values
                 return p.x() - node.x ;
             }
 
             // if its even position in tree hierarchy, then, compare y-axis values
             return p.y() - node.y;
+        }
+
+        private RectHV getRect(Node node, P p, int H, boolean isLeft) {
+            if(H % 2 != 0) {
+                // odd, vertical split
+
+                if(isLeft) {
+                    int xmin = node.x;
+                    int ymin = node.y;
+                    int xmax = p.x();
+                    int ymax =
+                } else {
+
+                }
+                return new RectHV();
+            }
+
+            // even, horizontal split
+
+        }
+
+        private RectHV getRect(int H) {
+            if(H == 0) {
+                return new RectHV(0, 0, 1, 1);
+            }
+            return null;
         }
 
         /***********************************************************************
@@ -70,20 +98,20 @@ public class KdTree {
         }
 
         private Node get(P p) {
-            return get(root, p);
+            return get(root, p, 0);
         }
 
-        private Node get(Node node, P p) {
+        private Node get(Node node, P p, int H) {
             if (node == null) return null;
-            double cmp = compare(node, p);
+            double cmp = compare(node, p, H);
             if (cmp > 0 && cmp < EPSILON) {
                 return node;
             }else if (cmp < 0 && cmp > -EPSILON){
                 return node;
             } else if (cmp < 0){
-                return get(node.left, p);
+                return get(node.left, p, H + 1);
             } else /*if (cmp > 0)*/ {
-                return get(node.right, p);
+                return get(node.right, p, H + 1);
             }
         }
 
@@ -104,9 +132,11 @@ public class KdTree {
         private Node add(Node node, P p, int H) {
             if (node == null) {
                 System.out.println("adding new node = " + p);
-                return new Node(p.x(), p.y(), H);
+                return new Node(p.x(), p.y(), H, getRect(H));
             }
-            double cmp = compare(node, p);
+
+            H = H + 1;
+            double cmp = compare(node, p, H);
             System.out.println("compare value = " + cmp + " H = " + H);
 
             if (cmp > 0 && cmp < EPSILON) {
@@ -114,7 +144,8 @@ public class KdTree {
             } else if (cmp < 0 && cmp > -EPSILON) {
                 System.out.println("not adding almost equal node = " + p + " cmp = " + cmp);
             } else if (cmp < 0) {
-                Node leftNode = add(node.left, p, node.H + 1);
+                Node leftNode = add(node.left, p, H);
+                leftNode.rectHV = getRect(node, p, H, true);
                 if(node.left == null) {
                     node.left = leftNode;
                     System.out.println("adding node = " + p + " to the LEFT of = " + node);
@@ -122,7 +153,8 @@ public class KdTree {
                     System.out.println("moving node = " + p + " to the LEFT of = " + node);
                 }
             } else if (cmp > 0) {
-                Node rightNode = add(node.right, p, node.H + 1);
+                Node rightNode = add(node.right, p, H);
+                rightNode.rectHV = getRect(node, p, H, false);
                 if(node.right == null) {
                     node.right = rightNode;
                     System.out.println("adding node = " + p + " to the RIGHT of = " + node);
@@ -150,7 +182,6 @@ public class KdTree {
     }
 
     TwoDTree<Point2D> pointSet = null;
-    double xmin = 0, ymin = 0;
 
     /**
      * construct an empty set of points
@@ -221,7 +252,7 @@ public class KdTree {
     }
 
     private void search(List<Point2D> inRange, Node node, RectHV rectHV) {
-        if(node == null) return;
+        if(node == null || rectHV == null || inRange == null) return;
 
         double xmax = node.x, ymax = node.y;
         RectHV rect = new RectHV(xmin, ymin, xmax, ymax);
@@ -255,7 +286,7 @@ public class KdTree {
             kdTree.insert(point2D);
         }
         Point2D origin = new Point2D(0, 0);
-        RectHV rectHV = new RectHV(0.1, 0.1, 0.9, 0.9);
+        RectHV rectHV = new RectHV(0.4, 0.4, 0.6, 0.6);
 
         long t1 = System.currentTimeMillis();
         System.out.println("nearest start time = " + t1);
